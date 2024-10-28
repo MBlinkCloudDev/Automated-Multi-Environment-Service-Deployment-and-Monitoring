@@ -1,0 +1,81 @@
+
+name: 'Terraform' # Workflow-name
+
+on: workflow_dispatch  # <----- can only run in standard-branch!!!
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-job2: # job-ID
+    name: 'Terraform' # Job-name
+    runs-on: ubuntu-latest
+    #environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v4
+
+
+    # A specific version of Terraform CLI can be installed:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      #with:
+      #  terraform_version: "1.1.7"
+
+    # bug with act and terraform permissions: https://github.com/nektos/act/issues/491
+    # act places files in the tmp-directory, but TF binary lacks executable permissions in container
+    # Workaround for act and terraform permissions
+    - name: fix terraform file permissions
+      run: find /tmp -name "terraform" -type f -exec chmod 755 {} + # ensuring any Terraform binary or scripts found in /tmp can execute properly.
+
+    - name: Terraform Version
+      run: terraform --version
+
+    - run: pwd
+
+    - name: Install Minikube
+      run: |
+        curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+        chmod +x minikube
+        sudo mv minikube /usr/local/bin/
+
+    - name: Install Docker (if necessary)
+      run: |
+        sudo apt-get update && \
+        sudo apt-get install -y docker.io
+
+    - name: Start Minikube
+      run: |
+        minikube start --driver=docker --cpus=2 --memory=2048
+
+
+
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: |
+        cd ./terraform  # Change directory to where your .tf files are
+        terraform init
+
+
+
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      #run: terraform plan -input=false
+      run: |
+        cd ./terraform  # Change directory again
+        terraform plan
+
+    - name: Terraform Apply
+      run: |
+        cd ./terraform  # Change directory again
+        terraform apply -auto-approve -input=false
+

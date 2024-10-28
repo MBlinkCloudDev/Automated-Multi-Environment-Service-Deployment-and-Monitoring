@@ -1,0 +1,33 @@
+name: 'Terraform' # Workflow-name
+
+on: workflow_dispatch  # <----- can only run in standard-branch!!!
+
+
+jobs:
+  terraform-outside-test: # job-ID
+    name: 'Terraform' # Job-name
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+#    - name: Checkout
+#      uses: actions/checkout@v4
+
+    - name: print
+      run: pwd
+
+    - name: Terraform Init
+      run: terraform --version
+
+
+
+
+
+
+
+

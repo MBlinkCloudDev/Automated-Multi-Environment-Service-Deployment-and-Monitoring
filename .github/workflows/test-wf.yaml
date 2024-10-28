@@ -1,0 +1,20 @@
+name: Test Workflow # Workflow-name
+
+on: workflow_dispatch  # <----- can only run in standard-branch!!!
+
+jobs:
+  test-job: # job-ID
+    name: Test Job 01 # Job-name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 01 - Checkout code
+        uses: actions/checkout@v2
+
+      - name: Step 02 - Print stuff
+        run: |
+          # Replace with your linting command
+          echo "My Dockerhub Name is" ${{ env.DOCKERHUB_USER }}
+          echo "My Dockerhub Token is" ${{ secrets.DOCKERHUB_TOKEN }}
+          echo "Hello ${{ github.event.inputs.NAME }} and ${{ github.event.inputs.SOME_VALUE }}!"
+          echo "Hello ${{ github.event.inputs.NAME }} and ${{ secrets.GH_TOKEN }}!"
+          echo $(date +%s)

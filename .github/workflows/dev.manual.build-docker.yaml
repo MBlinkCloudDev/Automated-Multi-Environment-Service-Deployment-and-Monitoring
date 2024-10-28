@@ -1,0 +1,18 @@
+name: Dev-Manual-BuildPublishDockerImage # Workflow-name
+
+on: workflow_dispatch  # <----- can only run in standard-branch!!!
+
+jobs:
+    docker-job: # job-ID
+        name: Build and Publish Docker Image # Job-name
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v4
+            - name: Build the Docker image
+              #run: docker build ./ms-1-fastapi-joke_provider/ -t alphabet54/ms1-jokes-fastapi-container:$(date +%s)
+              run: docker build ./ms-1-fastapi-joke_provider/ -t alphabet54/ms1-jokes-fastapi-container:latest
+            - name: Push the Docker image to Docker Hub
+              run: |
+                docker login -u alphabet54 -p ${{ secrets.DOCKERHUB_TOKEN }}
+                docker push alphabet54/ms1-jokes-fastapi-container:latest

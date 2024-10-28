@@ -1,0 +1,46 @@
+name: 'WSL-Test' # Workflow-name
+
+on: workflow_dispatch  # <----- can only run in standard-branch!!!
+
+
+jobs:
+  wsl-test: # job-ID
+    name: 'WSL Test' # Job-name
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+#    defaults:
+#      run:
+#        shell: bash
+
+    steps:
+
+    - name: print 1
+      run: pwd
+
+#    - name: ping
+#      run: |
+#        apt-get update -y
+#        apt-get install -y iputils-ping
+#        ping 192.168.2.111
+
+
+    - name: print
+      run: |
+        #apt-get update -y
+        #apt-get install -y iputils-ping
+        LOGIN2="${{ env.OPENSSH_USER }}@${{ env.OPENSSH_IP1 }}"
+        #echo $LOGIN2
+        #ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR $LOGIN2
+        #ssh -p 22 -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PreferredAuthentications=${{ secrets.OPENSSH_KEY }} $LOGIN1
+        ssh $LOGIN1
+        #ssh manue@DESKTOP-NCQU90T
+        #ssh ${{ env.OPENSSH_IP2 }}
+
+
+
+#    - name: print 2
+#      run: wsl --list --verbose
+
+
+#${{ secrets.OPENSSH_KEY }}
